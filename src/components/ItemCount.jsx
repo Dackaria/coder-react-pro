@@ -1,13 +1,16 @@
-import { Badge, Box, Button, Flex, useToast } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import { Badge, Button, Flex, useToast } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { useCart } from './CartContext';
 
-const ItemCount = () => {
-  const toast = useToast()
-  const [count, setCount] = useState(0)
+const ItemCount = ({product}) => {
+  console.log('Product received in ItemCount:', product);
+  const toast = useToast();
+  const [count, setCount] = useState(0);
+  const { addToCart } = useCart();
 
   const handleIncrement = () => {
     if (count < 10) {
-      setCount(count + 1)
+      setCount(count + 1);
     } else {
       toast({
         title: 'Error',
@@ -15,13 +18,13 @@ const ItemCount = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-      })
+      });
     }
-  }
+  };
 
   const handleDecrement = () => {
     if (count > 0) {
-      setCount(count - 1)
+      setCount(count - 1);
     } else {
       toast({
         title: 'Error',
@@ -29,11 +32,12 @@ const ItemCount = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-      })
+      });
     }
-  }
+  };
 
-  const addToCart = () => {
+  const handleAddToCart = () => {
+    addToCart(product, count);
     if (count === 0) {
       toast({
         title: 'Error',
@@ -43,6 +47,7 @@ const ItemCount = () => {
         isClosable: true,
       });
     } else {
+      // console.log(`Agregando ${count} unidad(es) al carrito`);
       toast({
         title: 'Felicitaciones.',
         description: `Has agregado ${count} unidad(es) a tu carrito`,
@@ -57,20 +62,21 @@ const ItemCount = () => {
   return (
     <Flex direction="column" align="center">
       <div>
-      <Button colorScheme="teal" variant="outline" onClick={handleIncrement}>
-        +
-      </Button>
-      <Badge colorScheme="purple">{count}</Badge>
-      <Button colorScheme="teal" variant="outline" onClick={handleDecrement}>
-        -
-      </Button>{' '}
+        <Button colorScheme="teal" variant="outline" onClick={handleDecrement}>
+          -
+        </Button>
+        <Badge colorScheme="purple">{count}</Badge>
+        <Button colorScheme="teal" variant="outline" onClick={handleIncrement}>
+          +
+        </Button>{' '}
       </div>
       <br />
-      <Button colorScheme="teal" onClick={addToCart}>
+      <Button colorScheme="teal" onClick={handleAddToCart}>
         Agregar al carrito
       </Button>
-      </Flex>
-  )
-}
+    </Flex>
+  );
+};
 
-export default ItemCount
+export default ItemCount;
+

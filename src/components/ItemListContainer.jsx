@@ -1,37 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import ItemList from './ItemList';
 import { useParams } from 'react-router-dom';
+import { collection, query, where, getDocs, getFirestore } from 'firebase/firestore';
 
 const ItemListContainer = () => {
-
-  const {category} = useParams()
+  const { category } = useParams();
   const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const cargarProductos = async () => {
+    const fetchProductos = async () => {
       try {
-        // Simula la carga de productos después de 200ms
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        const productos = [
-          { id: 1, titulo: "Bolso de mano", imagen:"../assets/img/1.jpg", descripcion: "descripcion del producto A", precio: 10500, category: "Bolsos" },
-          { id: 2, titulo: "Porta Zapatos", imagen:"../assets/img/4.jpg", descripcion: "descripcion del producto B", precio: 15000, category: "Portadores" },
-          { id: 3, titulo: "Addidas", imagen:"../assets/img/5.jpg", descripcion: "descripcion del producto C", precio: 27000, category: "Deportivos" },
-          { id: 4, titulo: "Pumma", imagen:"../assets/img/7.jpg", descripcion: "descripcion del producto D", precio: 19500, category: "Deportivos" }
-        ];
+        const db = getFirestore();
+        const itemCollection = collection(db, 'bolsos');
+        let q;
 
-        setProductos(productos);
+        if (category) {
+          // Si hay una categoría, filtra por esa categoría
+          q = query(itemCollection, where('categoria', '==', category));
+        } else {
+          // Si no hay categoría, obtén todos los productos
+          q = itemCollection;
+        }
+
+        const snapshot = await getDocs(q);
+        
+        const docs = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setProductos(docs);
+        setLoading(false);
       } catch (error) {
-        console.error("Error al cargar productos:", error);
+        console.error('Error al cargar productos:', error);
+        setLoading(false);
       }
     };
 
-    cargarProductos();
-  }, []); 
- 
-  const filteredProducts = category ? productos.filter((producto) => producto.category === category) : productos;
-  
-  return <ItemList productos={filteredProducts} />;
+    fetchProductos();
+  }, [category]); // Agrega category como dependencia para que se ejecute el efecto cuando cambie la categoría
+
+  console.log('Categoría:', category);
+  console.log('Productos:', productos);
+
+  return loading ? (
+    <p>Cargando productos...</p>
+  ) : (
+    <ItemList productos={productos} />
+  );
 };
 
 export default ItemListContainer;
+

@@ -7,10 +7,10 @@ const Item = ({ producto }) => {
         <Grid templateColumns="repeat(1, 1fr)" gap={4} marginBottom="1rem">
       <GridItem colSpan={1}>
        
-            <Card width='400px' minHeight='500px' marginBottom="5rem">
+            <Card align="center" width='400px' minHeight='500px' marginBottom="5rem">
                 <CardHeader>
                     <Box textAlign='center' key={producto.id}>
-                        <h1 style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '24px' }}>{producto.titulo}</h1>
+                        <h1 style={{ color: 'teal', fontWeight: 'bold', fontSize: '24px' }}>{producto.titulo}</h1>
                     </Box>
                 </CardHeader>
                 <CardBody>
@@ -19,12 +19,12 @@ const Item = ({ producto }) => {
                     </Box>
                 </CardBody>
 
-                <CardFooter>
-                <Link to={`/item/${producto.id}`}>
-                        <Button>
-                            <span>Ver Detalle</span>
-                        </Button>
-                   </Link>
+                <CardFooter >
+                            <Link to={`/item/${producto.id}`}>
+                                <Button style={{ color: 'teal', fontWeight: 'bold', fontSize: '24px' }}>
+                                    Ver Detalle
+                                </Button>
+                            </Link>
                 </CardFooter>
 
             </Card>

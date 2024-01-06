@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 const NavBar = () => {
   return (
     <div>
-        <Flex  height="200px">
+        <Flex  height="100px">
             <Box p='4'>
               <Link to="/">
              <img src="../assets/img/brand.jpeg" alt="brand"  style={{ width: '200px', height: 'auto' }}/>
@@ -15,7 +15,7 @@ const NavBar = () => {
             <Spacer/>
             <Menu>
             <MenuButton>
-            <span style={{ color: 'blue', fontWeight: 'bold', fontSize: '24px' }}>Categorias</span>
+            <span style={{ color: '#8A2BE2', fontWeight: 'bold', fontSize: '24px' }}>Categorias</span>
             </MenuButton>
             <MenuList>
                 <MenuItem>

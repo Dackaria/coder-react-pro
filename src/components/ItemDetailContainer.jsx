@@ -1,42 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import ItemDetail from './ItemDetail';
 import { useParams } from 'react-router-dom';
+import { collection, doc, getDoc, getFirestore } from 'firebase/firestore';
 
 const ItemDetailContainer = () => {
   const { id } = useParams();
-  const [productos, setProductos] = useState([]);
+  const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const cargarProductos = async () => {
+    const fetchProducto = async () => {
       try {
-        // Simula la carga de productos después de 200ms
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const db = getFirestore();
+        const itemDocRef = doc(db, 'bolsos', id);
+        const itemDocSnap = await getDoc(itemDocRef);
 
-        const productos = [
-          { id: 1, titulo: "Bolso de mano", imagen: "../assets/img/1.jpg", descripcion: "descripcion del producto A", precio: 10500, category: "Bolsos" },
-          { id: 2, titulo: "Porta Zapatos", imagen: "../assets/img/4.jpg", descripcion: "descripcion del producto B", precio: 15000, category: "Portadores" },
-          { id: 3, titulo: "Addidas", imagen: "../assets/img/5.jpg", descripcion: "descripcion del producto C", precio: 27000, category: "Deportivos" },
-          { id: 4, titulo: "Pumma", imagen: "../assets/img/7.jpg", descripcion: "descripcion del producto D", precio: 19500, category: "Deportivos" }
-        ];
+        if (itemDocSnap.exists()) {
+          setProducto({
+            id: itemDocSnap.id,
+            ...itemDocSnap.data(),
+          });
+        } else {
+          console.error('Producto no encontrado');
+        }
 
-        setProductos(productos);
-        setLoading(false); // Indica que la carga ha terminado
+        setLoading(false);
       } catch (error) {
-        console.error("Error al cargar productos:", error);
+        console.error('Error al cargar el producto:', error);
+        setLoading(false);
       }
     };
 
-    cargarProductos();
-  }, []);
-
-  const findProducts = id ? productos.find((producto) => producto.id === Number(id)) : null;
+    fetchProducto();
+  }, [id]);
 
   return loading ? (
-    <p>Cargando productos...</p>
+    <p>Cargando producto...</p>
   ) : (
-    <ItemDetail findProducts={findProducts} />
+    <ItemDetail findProducts={producto} />
   );
 };
 
 export default ItemDetailContainer;
+
